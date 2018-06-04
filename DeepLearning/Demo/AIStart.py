@@ -17,22 +17,20 @@ print(mnist.validation.labels.shape)
 print(mnist.test.images.shape)
 print(mnist.test.labels.shape)
 
-plt.figure(figsize=(8, 8))
+plt.figure(figsize=(8,8))
 
 for idx in range(16):
-    plt.subplot(4, 4, idx+1)
+    plt.subplot(4,4, idx+1)
     plt.axis('off')
     plt.title('[{}]'.format(mnist.train.labels[idx]))
-    plt.imshow(mnist.train.images[idx].reshape((28, 28)))
-
+    plt.imshow(mnist.train.images[idx].reshape((28,28)))
+    
 x = tf.placeholder("float", [None, 784])
 y = tf.placeholder("int64", [None])
 learning_rate = tf.placeholder("float")
 
-
 def initialize(shape, stddev=0.1):
-    return tf.truncated_normal(shape, stddev=0.1)
-
+  return tf.truncated_normal(shape, stddev=0.1)
 
 L1_units_count = 300
 
@@ -42,16 +40,15 @@ logits_1 = tf.matmul(x, W_1) + b_1
 output_1 = tf.nn.relu(logits_1)
 
 L1_1_units_count = 100
-W_1_1 = tf.Variable(initialize(
-    [L1_units_count, L1_1_units_count], stddev=0.035))
+W_1_1 = tf.Variable(initialize([L1_units_count,L1_1_units_count],stddev=0.03))
 b_1_1 = tf.Variable(initialize([L1_1_units_count]))
-logits_1_1 = tf.matmul(output_1, W_1_1)+b_1_1
+logits_1_1 = tf.matmul(output_1,W_1_1)+b_1_1
 output_1_1 = tf.nn.relu(logits_1_1)
 
-L2_units_count = 10
-W_2 = tf.Variable(initialize([L1_1_units_count, L2_units_count], stddev=0.063))
+L2_units_count = 10 
+W_2 = tf.Variable(initialize([L1_1_units_count, L2_units_count], stddev=0.065))
 b_2 = tf.Variable(initialize([L2_units_count]))
-logits_2 = tf.matmul(output_1_1, W_2) + b_2
+logits_2 = tf.matmul(output_1_1, W_2) + b_2  
 
 logits = logits_2
 
@@ -66,14 +63,14 @@ correct_pred = tf.equal(tf.argmax(pred, 1), y)
 accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 
 batch_size = 32
-trainig_step = 1500
+trainig_step = 10000
 
 saver = tf.train.Saver()
 
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
 
-    # 定义验证集与测试集
+    #定义验证集与测试集
     validate_data = {
         x: mnist.validation.images,
         y: mnist.validation.labels,
@@ -90,7 +87,7 @@ with tf.Session() as sess:
                 learning_rate: 0.3
             })
 
-        # 每100次训练打印一次损失值与验证准确率
+        #每100次训练打印一次损失值与验证准确率
         if i > 0 and i % 100 == 0:
             validate_accuracy = sess.run(accuracy, feed_dict=validate_data)
             print(
@@ -99,13 +96,13 @@ with tf.Session() as sess:
             saver.save(sess, './model.ckpt', global_step=i)
 
     print("the training is finish!")
-    # 最终的测试准确率
+    #最终的测试准确率
     acc = sess.run(accuracy, feed_dict=test_data)
     print("the test accuarcy is:", acc)
 
-if validate_accuracy >= 0.98:
+if validate_accuracy >=0.98:
     score = 100
-if validate_accuracy >= 0.96 and validate_accuracy < 0.98:
+if validate_accuracy >=0.96 and validate_accuracy <0.98 :
     score = 60
 else:
     score = 0
